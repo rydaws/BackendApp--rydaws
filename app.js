@@ -23,23 +23,74 @@ app.use(express.static(path.join(__dirname, 'public')));
 //app.use('/users', usersRouter);
 
 app.get('/hello', (req, res, next) => {
-  res.end('world');
+  //res.end('world');
+  res.render('index', {title: "world"})
 })
 
 let penguin = {
   name: "Pablo",
-  location: "Snowlands" 
+  house: "Snowlands" 
 }
 
 let dinosaur = {
   name: "Mason",
-  location: "Roomilands"
+  house: "Roomilands"
 }
 
 let kangaroo = {
   name: "Austin",
-  location: "Outback"
+  house: "Outback"
 }
+
+let wizards = [penguin, dinosaur, kangaroo]
+
+
+app.get('/', (req, res, next) => {
+  res.render('wizardProfile', { wizards: wizards});
+})
+
+// *****************************************************************************
+// db Operations
+// *****************************************************************************
+const { MongoClient } = require('mongodb');
+
+//const url = 'mongodb://localhost:27017/';
+const url = 'mongodb+srv://mighty-ducks:EavanRyan@cluster0.ajw5q1t.mongodb.net/magicWorld'
+//const url = 'mongodb://myuser:mypassword@mongo:27017/'; 
+//  GET THE HOSTNAME, username & password & the DB name from environment vars. 
+// Example: console.log(process.env.NODE_ENV);
+
+const dbName = 'magicWorld';
+const client = new MongoClient(url);
+
+app.get('/db', async function(req, res, next) {
+  try {
+    
+    const wizardsCopy = JSON.parse(JSON.stringify(wizards));
+    // Try removing this! Can you answer why a deep copy is required here? 
+    // What happens if same wizards array is used?
+
+    await client.connect();
+    console.log('Connected successfully to server');
+    const db = client.db(dbName);
+    const collection = db.collection('wizards');
+    
+    const insertResult = await collection.insertMany(wizardsCopy);
+  
+    console.log('Inserted documents =>', insertResult);
+
+    const findResult = await collection.find({}).toArray();
+    //res.send(findResult);
+    res.render('wizardProfile', {wizards: findResult});
+
+  } catch (error) {
+    console.log(error);
+    next(error)
+  } finally {
+    client.close()
+  }
+  
+});
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
