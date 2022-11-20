@@ -6,3 +6,22 @@ body {
 a {
   color: #00B7FF;
 }
+
+.home {
+  font-family: 'Roboto', sans-serif;
+  display: flex;
+  flex-direction: row;
+}
+
+.content {
+  width: 50rem;
+  margin-left: 8rem;
+  margin-top: 2rem;
+  flex-direction: column;
+}
+
+.photo {
+  margin-left: 2rem;
+  height: 591px;
+  width: 443px;
+}

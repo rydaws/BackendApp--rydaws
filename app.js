@@ -27,26 +27,29 @@ app.get('/hello', (req, res, next) => {
   res.render('index', {title: "world"})
 })
 
-let penguin = {
-  name: "Pablo",
-  house: "Snowlands" 
-}
+// let human = {
+//   name: "Ryan",
+//   bio: "Aspiring Programmer",
+//   photo: "https://rdawson.s3.amazonaws.com/image0.jpg"
+// }
 
-let dinosaur = {
-  name: "Mason",
-  house: "Roomilands"
-}
+// let penguin = {
+//   name: "Pablo",
+//   bio: "Extravagent Explorer",
+//   photo: "https://rdawson.s3.amazonaws.com/pablo.jpeg"
+// }
 
-let kangaroo = {
-  name: "Austin",
-  house: "Outback"
-}
+// let kangaroo = {
+//   name: "Austin",
+//   bio: "Best friend and professional jumper",
+//   photo: "https://rdawson.s3.amazonaws.com/austin.jpeg"
+// }
 
-let wizards = [penguin, dinosaur, kangaroo]
+// let wizards = [human, penguin, kangaroo]
 
 
-app.get('/', (req, res, next) => {
-  res.render('wizardProfile', { wizards: wizards});
+app.get('/db', (req, res, next) => {
+  res.render('index', { wizards: wizards});
 })
 
 // *****************************************************************************
@@ -63,10 +66,10 @@ const url = 'mongodb+srv://mighty-ducks:EavanRyan@cluster0.ajw5q1t.mongodb.net/m
 const dbName = 'magicWorld';
 const client = new MongoClient(url);
 
-app.get('/db', async function(req, res, next) {
+app.get('/', async function(req, res, next) {
   try {
     
-    const wizardsCopy = JSON.parse(JSON.stringify(wizards));
+    //const wizardsCopy = JSON.parse(JSON.stringify(wizards));
     // Try removing this! Can you answer why a deep copy is required here? 
     // What happens if same wizards array is used?
 
@@ -75,13 +78,13 @@ app.get('/db', async function(req, res, next) {
     const db = client.db(dbName);
     const collection = db.collection('wizards');
     
-    const insertResult = await collection.insertMany(wizardsCopy);
+    //const insertResult = await collection.insertMany(wizardsCopy);
   
-    console.log('Inserted documents =>', insertResult);
+    //console.log('Inserted documents =>', insertResult);
 
     const findResult = await collection.find({}).toArray();
     //res.send(findResult);
-    res.render('wizardProfile', {wizards: findResult});
+    res.render('index', {wizards: findResult});
 
   } catch (error) {
     console.log(error);
